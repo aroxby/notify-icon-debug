@@ -18,26 +18,37 @@ extern "C" WINAPI LSTATUS RegGetValueA(
 
 /* Source: https://tmintner.wordpress.com/2011/07/08/
     windows-7-notification-area-automation-falling-back-down-the-binary-registry-rabbit-hole/*/
+void rot13(wchar_t *str);
+
 struct IconStreamBlockHeader {
     union {
         char unk[20];
         struct {    // Reverse engineered
-            DWORD unk0;
+            DWORD unk0;  // size?
             DWORD unk1;
             WORD unk2;
             WORD unk3;
             DWORD streamCount;
-            DWORD unk4;
+            DWORD unk4;  // size?
         };
     };
 };
 
-struct IconStream {
-    wchar_t path[528 / 2];
+class IconStream {
+public:
+    wchar_t path[528 / sizeof(wchar_t)];
     DWORD visibility;
-    wchar_t lastTip[512 / 2];
+    wchar_t lastTip[512 / sizeof(wchar_t)];
     char unk0[592];  // Possible NID variant?
     DWORD unk1;  //App ID?
+
+    void getPath(std::wstring &out) {
+        wchar_t *buffer = new wchar_t[wcslen(path) + sizeof(wchar_t)];
+        wcscpy(buffer, path);
+        rot13(buffer);
+        out.assign(buffer);
+        delete[] buffer;
+    }
 };
 
 void rot13(wchar_t *str) {
