@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 #include <cassert>
 #include <windows.h>
 using namespace std;
@@ -50,6 +51,9 @@ public:
         delete[] buffer;
     }
 };
+
+typedef std::multimap<std::wstring, IconStream*> StreamSet;
+typedef StreamSet::value_type KeyedStream;
 
 void rot13(wchar_t *str) {
     while(*str) {
@@ -109,11 +113,17 @@ int main() {
     }
     printf("\n");
 
+    StreamSet streams;
     for(int i = 0; i < numStreams; i++) {
         IconStream *stream = (IconStream*)(buffer);
         stream += i;
-        rot13(stream->path);
-        printf("%S\n", stream->path);
+        wstring path;
+        stream->getPath(path);
+        streams.insert(KeyedStream(path, stream));
+    }
+
+    for(auto i = streams.begin(); i!=streams.end(); i++){
+        printf("%S\n", i->first.c_str());
     }
     printf("\n");
 
