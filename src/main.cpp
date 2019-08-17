@@ -55,6 +55,15 @@ public:
 typedef std::multimap<std::wstring, IconStream*> StreamSet;
 typedef StreamSet::value_type KeyedStream;
 
+class StreamCount : public std::map<std::wstring, int> {
+public:
+    mapped_type inc(const key_type &key) {
+        mapped_type &current = (*this)[key];
+        current++;
+        return current;
+    }
+};
+
 void rot13(wchar_t *str) {
     while(*str) {
         if(*str >= 'A' && *str <= 'Z') {
@@ -122,6 +131,17 @@ int main() {
         streams.insert(KeyedStream(path, stream));
     }
 
+    StreamCount counter;
+    for(auto i = streams.begin(); i!=streams.end(); i++){
+        counter.inc(i->first.c_str());
+    }
+    for(auto i = counter.begin(); i!=counter.end(); i++){
+        if(i->second < 2){
+            streams.erase(i->first);
+        }
+    }
+
+    printf("\n");
     for(auto i = streams.begin(); i!=streams.end(); i++){
         printf("%S\n", i->first.c_str());
     }
