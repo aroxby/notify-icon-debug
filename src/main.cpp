@@ -4,19 +4,6 @@
 #include <windows.h>
 using namespace std;
 
-// Need to define a windows version macro? (_WIN32_WINNT didn't help)
-typedef LONG LSTATUS;
-const static int RRF_RT_REG_BINARY = 0x8;
-extern "C" WINAPI LSTATUS RegGetValueA(
-  HKEY    hkey,
-  LPCSTR  lpSubKey,
-  LPCSTR  lpValue,
-  DWORD   dwFlags,
-  LPDWORD pdwType,
-  PVOID   pvData,
-  LPDWORD pcbData
-);
-
 /* Source: https://tmintner.wordpress.com/2011/07/08/
     windows-7-notification-area-automation-falling-back-down-the-binary-registry-rabbit-hole/*/
 void rot13(wchar_t *str);
